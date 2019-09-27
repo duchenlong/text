@@ -58,23 +58,20 @@ int main()
 /// ，py 代表行数和列数
 void find(int arr[3][3], int *px, int * py, int key)
 {
-	int j = 0;
 	if (key > arr[*px-1][*py-1])
 	{
 		printf("该数字不存在\n");
 	}
 	else
 	{
-		int i = 3,j=(*py);
-		while (i)
+		int i = 0,j=(*py);
+		while (i<(*px)*(*py))
 		{
-			j++;
 			if (key == arr[*px - 1][*py - 1])
 			{
 				printf("该数字的位置是%d,%d\n", *px, *py);
 				(*px)--;
 				*py = j;
-				i--;
 			}
 			/*else if (key > arr[*px - 1][*py - 1])
 			{
@@ -88,11 +85,10 @@ void find(int arr[3][3], int *px, int * py, int key)
 			{
 				(*py) = j;
 				(*px)--;
-				i--;
 			}
+			i++;
 		}
 	}
-	printf("%d",j);
 }
 int main()
 {
