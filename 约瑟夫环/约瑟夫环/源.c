@@ -1,6 +1,8 @@
 #define _CRT_SECURE_NO_WARNINGS 1
+
 #include<stdio.h>
 #include<stdlib.h>
+
 typedef struct node
 {
 	int data;
@@ -30,16 +32,6 @@ node* CreatList(node* l,int n)
 	ret->next = l;
 	return l;
 }
-node* DelList(node* l,node* point)
-{
-	node* p;
-	p = (node*)malloc(sizeof(node));
-	p = l;
-	l = l->next;
-	point->next = l;
-	free(p);
-	return p;
-}
 
 void game(node* l,int n)
 {
@@ -62,17 +54,17 @@ void game(node* l,int n)
 			printf("%d ", l->position);
 			count = 0;
 			m = l->data;
-			/*node* p;
+			node* p;
 			p = (node*)malloc(sizeof(node));
 			p = l;
 			l = l->next;
 			point->next = l;
-			free(p);*/
-			l = DelList(l, point);
+			free(p);
 		}
 	}
 	printf("%d ", l->position);
 }
+
 int main()
 {
 	printf("n=");
@@ -82,11 +74,5 @@ int main()
 	l = (node*)malloc(sizeof(node));
 	l = CreatList(l,n);
 	game(l,n);
-	/*int i = 0;
-	for (i = 0; i < 8; i++)
-	{
-		printf("%d ", l->data);
-		l = l->next;
-	}*/
 	return 0;
 }
