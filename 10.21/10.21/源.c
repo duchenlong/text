@@ -1,5 +1,4 @@
 #define _CRT_SECURE_NO_WARNINGS 1
-
 #if 0
 //实现一个函数，可以左旋字符串中的k个字符。
 //ABCD左旋一个字符得到BCDA
@@ -7,30 +6,31 @@
 #include<stdio.h>
 #include<string.h>
 
+void Inverse(char* left,char* right)
+{
+	char tmp;
+	while (left < right)
+	{
+		tmp = *left;
+		*left = *right;
+		*right = tmp;
+		left++;
+		right--;
+	}
+}
+
 void rotate(char* arr,const int k,const int len)
 {
-	int i = 0;
-	int n = k;
-	for (i = 0; i <len-k; i++)
-	{
-		int tmp = arr[i];
-		arr[i] = arr[n];
-		arr[n] = tmp;
-		n++;
-	}
-	for (i = 0; i <k-1; i++)
-	{
-		int tmp = arr[i+len-k];
-		arr[i + len - k] = arr[len - 1];
-		arr[len - 1] = tmp;
-	}
+	Inverse(arr, arr + k - 1);
+	Inverse(arr + k, arr + len - 1);
+	Inverse(arr, arr + len - 1);
 }
 
 int main()
 {
-	char arr[] = "ABCDE";
+	char arr[] = "ABCDEF";
 	int len = strlen(arr);
-	int k =2;
+	int k =3;
 	rotate(arr,k%len, len);
 	puts(arr);
 	return 0;
@@ -47,45 +47,31 @@ int main()
 //AABCD右旋一个字符得到DAABC
 
 #include<stdio.h>
+#include<stdlib.h>
 #include<string.h>
-
-void rotate(char* arr, const int k, const int len)
+int lor_rotate(char* str, char* src)
 {
-	int i = 0;
-	int n = k;
-	for (i = 0; i <len - k; i++)
+	int len = strlen(str);
+	int ret = 0;
+	char* double_str = (char*)malloc(sizeof(char)* (2 * len + 1));
+	strcpy(double_str, str);
+	strcat(double_str, str);
+	if (strstr(double_str, src) == NULL)
 	{
-		int tmp = arr[i];
-		arr[i] = arr[n];
-		arr[n] = tmp;
-		n++;
+		ret = 0;
 	}
-	for (i = 0; i <k - 1; i++)
+	else
 	{
-		int tmp = arr[i + len - k];
-		arr[i + len - k] = arr[len - 1];
-		arr[len - 1] = tmp;
+		ret = 1;
 	}
+	free(double_str);
+	return ret;
 }
 
 int main()
 {
-	char s1[] = "AABCD";
-	char s2[] = "BCDAA";
-	/*char s1[] = "abcd";
-	char s2[] = "ACBD";*/
-	int k = 0;
-	int len = strlen(s1);
-	printf("左旋为正，右旋为负\n");
-	scanf("%d", &k);
-	if (k > 0)
-	{
-		rotate(s1, k%len, len);
-	}
-	else
-	{
-		rotate(s1, (-len)%k+len, len);
-	}
-	printf("%d\n", strcmp(s1, s2)==0?1:0);
+	char s1[] = "abcd";
+	char s2[] = "ACBD";
+	printf("%d",lor_rotate(s1,s2));
 	return 0;
 }
