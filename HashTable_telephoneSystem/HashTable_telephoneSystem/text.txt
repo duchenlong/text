@@ -1,0 +1,6 @@
+-2		1003		11
+-222		22		100
+-baba		123456789		sssssssssssssssssssssss
+-didi		10086		sxcdv
+-duchenlong		13325430774		sssssssssssssssssssssssssssss
+|		共5个用户信息		|
