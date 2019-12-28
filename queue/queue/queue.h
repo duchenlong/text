@@ -122,7 +122,13 @@ int QueueEmpty(Queue* q)
 void QueueDestroy(Queue* q)
 {
 	assert(q);
-
+	
+	while(q->_front!=q->_rear)
+	{
+		QNode* node=q->_front->_pNext;
+		free(node);
+		q->_front=node;
+	 } 
+	free(q->_front);
 	free(q);
-	q->_front = q->_rear = NULL;
 }
