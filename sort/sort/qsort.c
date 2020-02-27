@@ -1,6 +1,7 @@
 #define _CRT_SECURE_NO_WARNINGS 1
 
 #include "qsort.h"
+#include "stack.h"
 
 // 排序实现的接口
 
@@ -140,6 +141,43 @@ void HeapSort(int* a, int n)
 // 冒泡排序
 void BubbleSort(int* a, int n);
 
+void choose(int* a,int left,int right)
+{
+	//随机数法
+	//int key = left + rand()%(right - left);
+	//三数取中
+	int key = (left + right) / 2;
+	
+	if (a[left] < a[key])
+	{
+		if (a[key] < a[right])
+		{
+			Swap(a, left, key);
+		}
+		else
+		{
+			if (a[left] < a[right])
+			{
+				Swap(a, left, right);
+			}
+		}
+	}
+	else
+	{
+		if (a[key] > a[right])
+		{
+			Swap(a, left, key);
+		}
+		else
+		{
+			if (a[left] > a[right])
+			{
+				Swap(a, left, right);
+			}
+		}
+	}
+}
+
 // 快速排序递归实现  (三数取中,随机取数)
 // 快速排序hoare版本
 void PartSort1(int* a, int left, int right)
@@ -149,7 +187,9 @@ void PartSort1(int* a, int left, int right)
 	{
 		return;
 	}
-	//int key = rand()%(right - left +1);
+
+	choose(a,left,right);
+	
 	int key = left;
 	int l = left;
 	int r = right;
@@ -176,7 +216,39 @@ void PartSort1(int* a, int left, int right)
 	PartSort1(a, left + 1, r);
 }
 // 快速排序挖坑法
-void PartSort2(int* a, int left, int right);
+void PartSort2(int* a, int left, int right)
+{
+	//递归结束条件
+	if (left >= right)
+	{
+		return;
+	}
+
+	choose(a, left, right);
+
+	int key = a[left];
+	int l = left;
+	int r = right;
+
+	while (left < right)
+	{
+		//找到从右向左第一个小于 a[key] 的值
+		while (left < right && a[right] >= a[left])
+		{
+			right--;
+		}
+		Swap(a, left, right);
+		//找到从左往右第一个大于 a[key] 的值
+		while (left < right && a[left] <= a[right])
+		{
+			left++;
+		}
+		Swap(a, left, right);
+	}
+
+	PartSort1(a, l, left - 1);
+	PartSort1(a, left + 1, r);
+}
 // 快速排序前后指针法
 void PartSort3(int* a, int left, int right)
 {
@@ -205,9 +277,126 @@ void PartSort3(int* a, int left, int right)
 	PartSort1(a, prev + 1, right);
 }
 // 快速排序 非递归实现
-void QuickSortNonR(int* a, int left, int right);
+void QuickSortNonR(int* a, int left, int right)
+{
+	Stack st;
+	StackInit(&st);
+	//入栈方式 先入当前区间的左边，再入右边
+	StackPush(&st, left);
+	StackPush(&st, right);
+
+	while (!StackEmpty(&st))
+	{
+		//弹栈时，先得到的是区间的右边，后得到左边
+		right = StackTop(&st);
+		StackPop(&st);
+		left = StackTop(&st);
+		StackPop(&st);
+
+		//去除只有一个数或者没有数的情况的情况
+		if (left >= right)
+		{
+			continue;
+		}
+
+		int key = left;
+		int l = left;
+		int r = right;
+
+		while (left < right)
+		{
+			//找到从右向左第一个小于 a[key] 的值
+			while (left < right && a[right] >= a[key])
+			{
+				right--;
+			}
+
+			//找到从左往右第一个大于 a[key] 的值
+			while (left < right && a[left] <= a[key])
+			{
+				left++;
+			}
+
+			Swap(a, left, right);
+		}
+		Swap(a, left, key);
+
+		//先让右边区间入栈
+		StackPush(&st, left+1);
+		StackPush(&st, r);
+		//左边区间入栈
+		StackPush(&st, l);
+		StackPush(&st, left - 1);
+	}
+
+	StackDestroy(&st);
+}
+
+void _MergeSort(int* a, int* tmp, int left, int right)
+{
+	int mid = (left + right) / 2;
+	/*
+	[0,7] -> [0,3] [4,7]
+	递归[0,3] -> 划分[0,1][2,3]
+
+	递归[0,1] ->划分[0,0][1,1] -->归并出有序的 [0,1]
+	递归[2,3] ->划分[2,2][3,3] -->归并出有序的 [2,3]
+
+	[0,1][2,3] --> 归并出有序的[0,3]
+
+	递归[4,7] -> 划分[4,5][5,7]
+	递归[4,5] ->划分[4,4][5,5] -->归并出有序的 [4,5]
+	递归[6,7] ->划分[6,6][7,7] -->归并出有序的 [6,7]
+	[4,5] [6,7] --> 归并出有序的[4,7]
+
+	[0,3] [4,7] --> 归并出有序的[0,7]
+	*/
+
+	if (left >= right)
+	{
+		return;
+	}
+
+	//[left,mid]  [mid+1,right]
+	_MergeSort(a, tmp, left, mid);
+	_MergeSort(a, tmp, mid + 1, right);
+
+	//两个有序数组的合并
+	int begin1 = left, begin2 = mid + 1;
+	int end1 = mid, end2 = right;
+	int index = begin1;
+	while (begin1 <= end1 && begin2 <= end2)
+	{
+		if (a[begin1] < a[begin2])
+		{
+			tmp[index++] = a[begin1++];
+		}
+		else
+		{
+			tmp[index++] = a[begin2++];
+		}
+	}
+
+	while (begin1 <= end1)
+	{
+		tmp[index++] = a[begin1++];
+	}
+
+	while (begin2 <= end2)
+	{
+		tmp[index++] = a[begin2++];
+	}
+	//将tmp排序好的数据拷贝到a数组对应位置
+	memcpy(a + left, tmp + left, sizeof(int)* (right - left + 1));
+}
+
 // 归并排序递归实现
-void MergeSort(int* a, int n);
+void MergeSort(int* a, int n)
+{
+	int* tmp = (int*)malloc(sizeof(int)* n);
+
+	_MergeSort(a, tmp, 0, n - 1);
+}
 // 归并排序非递归实现
 void MergeSortNonR(int* a, int n);
 // 计数排序

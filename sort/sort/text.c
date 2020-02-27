@@ -17,7 +17,8 @@ void TestOP()
 {
 	srand((unsigned)time(NULL));
 
-	const int N =10000000;
+	//const int N =10000000;
+	const int N = 1000;
 	int* a1 = (int*)malloc(sizeof(int)*N);
 	int* a2 = (int*)malloc(sizeof(int)*N);
 	int* a3 = (int*)malloc(sizeof(int)*N);
@@ -34,6 +35,7 @@ void TestOP()
 		a4[i] = a1[i];
 		a5[i] = a1[i];
 		a6[i] = a1[i];
+		a7[i] = a1[i];
 	}
 	
 	//int begin1 = clock();
@@ -58,27 +60,29 @@ void TestOP()
 	//Show(a4, N);
 
 	int begin5 = clock();
-	PartSort3(a5, 0, N-1);	// 快速排序
+	//PartSort3(a5, 0, N-1);	// 快速排序
+	QuickSortNonR(a5, 0, N - 1);
 	int end5 = clock();
 	//Show(a5, N);
 	printf("QuickSort1: %d\n", end5 - begin5);
 
-	//int begin7 = clock();
-	//PartSort2(a7, 0, N - 1);	// 快速排序
-	//int end5 = clock();
-	////Show(a5, N);
-	//printf("QuickSort2: %d\n", end5 - begin5);
+	int begin7 = clock();
+	PartSort2(a7, 0, N - 1);	// 快速排序
+	int end7 = clock();
+	Show(a7, N);
+	printf("quicksort2: %d\n", end5 - begin5);
 
 	//int begin8 = clock();
 	//PartSort3(a8, 0, N - 1);	// 快速排序
 	//int end5 = clock();
 	////Show(a5, N);
 	//printf("QuickSort3: %d\n", end5 - begin5);
-
-	//int begin6 = clock();
-	//MergeSort(a6, N);	// 归并排序
-	//int end6 = clock();
-	//printf("MergeSort: %d\n", end6 - begin6);
+	
+	int begin6 = clock();
+	MergeSort(a6, N);	// 归并排序
+	int end6 = clock();
+	//Show(a6, N);
+	printf("MergeSort: %d\n", end6 - begin6);
 
 	
 	
