@@ -233,19 +233,19 @@ void PartSort2(int* a, int left, int right)
 	while (left < right)
 	{
 		//找到从右向左第一个小于 a[key] 的值
-		while (left < right && a[right] >= a[left])
+		while (left < right && a[right] >= key)
 		{
 			right--;
 		}
-		Swap(a, left, right);
+		a[left] = a[right];
 		//找到从左往右第一个大于 a[key] 的值
-		while (left < right && a[left] <= a[right])
+		while (left < right && a[left] <= key)
 		{
 			left++;
 		}
-		Swap(a, left, right);
+		a[right] = a[left];
 	}
-
+	a[left] = key;
 	PartSort1(a, l, left - 1);
 	PartSort1(a, left + 1, r);
 }
@@ -396,8 +396,104 @@ void MergeSort(int* a, int n)
 	int* tmp = (int*)malloc(sizeof(int)* n);
 
 	_MergeSort(a, tmp, 0, n - 1);
+
+	free(tmp);
 }
 // 归并排序非递归实现
-void MergeSortNonR(int* a, int n);
-// 计数排序
-void CountSort(int* a, int n);
+void MergeSortNonR(int* a, int n)//n为数组里元素的数量
+{
+	int* tmp = (int*)malloc(sizeof(int)* n);
+
+	int size = 1;
+	int count = (int)(log(n) / log(2)) + 1;;
+	for (; size < n;size *= 2)
+	{
+		int i = 0;
+		for (i = 0; i < n; i += size*2)
+		{
+			int left = i, mid = i + size,right = mid + size;
+
+			//处理最后一组不满足size个大小的情况
+			if (mid > n)
+			{
+				mid = n;
+			}
+			if (right > n)
+			{
+				right = n;
+			}
+
+			//两个有序数组的合并
+			//[begin1,end1) [begin2,end2)
+			int begin1 = left, begin2 = mid;
+			int end1 = mid, end2 = right;
+			int index = begin1;
+			while (begin1 < end1 && begin2 < end2)
+			{
+				if (a[begin1] < a[begin2])
+				{
+					tmp[index++] = a[begin1++];
+				}
+				else
+				{
+					tmp[index++] = a[begin2++];
+				}
+			}
+
+			while (begin1 < end1)
+			{
+				tmp[index++] = a[begin1++];
+			}
+
+			while (begin2 < end2)
+			{
+				tmp[index++] = a[begin2++];
+			}
+		}
+		// 将tmp排序好的数据拷贝到a数组对应位置
+		memcpy(a, tmp, sizeof(int)* n);
+	}
+}
+// 计数排序(非比较类)
+void CountSort(int* a, int n)
+{
+	int min = a[0];
+	int max = a[0];
+
+	//先找到数组中最大值和最小值
+	int i = 0;
+	for (i = 0; i < n; i++)
+	{
+		if (max < a[i])
+		{
+			max = a[i];
+		}
+
+		if (min > a[i])
+		{
+			min = a[i];
+		}
+	}
+	//数据所在的一个范围
+	int range = max - min + 1;
+	int* arr = (int*)calloc(range,sizeof(int));
+
+	//统计对应的数据出现的次数
+	for (i = 0; i < n; i++)
+	{
+		int tmp = a[i] - min;
+		arr[tmp]++;
+	}
+	int len = 0;
+	//根据次数排序，返回原数组
+	for (i = 0; i < range; i++)
+	{
+		while (arr[i])
+		{
+			a[len++] = i + min;
+			arr[i]--;
+		}
+	}
+
+	free(arr);
+}

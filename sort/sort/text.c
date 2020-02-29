@@ -18,7 +18,7 @@ void TestOP()
 	srand((unsigned)time(NULL));
 
 	//const int N =10000000;
-	const int N = 1000;
+	const int N = 50;
 	int* a1 = (int*)malloc(sizeof(int)*N);
 	int* a2 = (int*)malloc(sizeof(int)*N);
 	int* a3 = (int*)malloc(sizeof(int)*N);
@@ -36,6 +36,7 @@ void TestOP()
 		a5[i] = a1[i];
 		a6[i] = a1[i];
 		a7[i] = a1[i];
+		a8[i] = a1[i];
 	}
 	
 	//int begin1 = clock();
@@ -77,15 +78,16 @@ void TestOP()
 	//int end5 = clock();
 	////Show(a5, N);
 	//printf("QuickSort3: %d\n", end5 - begin5);
-	
+	//Show(a6, N);
 	int begin6 = clock();
-	MergeSort(a6, N);	// πÈ≤¢≈≈–Ú
+	MergeSortNonR(a6, N);	// πÈ≤¢≈≈–Ú
 	int end6 = clock();
 	//Show(a6, N);
 	printf("MergeSort: %d\n", end6 - begin6);
 
-	
-	
+	printf("--");
+	CountSort(a8, N);
+	//Show(a8, N);
 
 	/*free(a1);
 	free(a2);
